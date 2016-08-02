@@ -1,0 +1,174 @@
+{% extends "tweets/base.html" %}
+		
+	{% block content %}
+	{% load staticfiles %}
+	<div id="top">
+		<img src="{{user.profile_image_url}}" height="100" width="100"/>
+		<h3>{{user.name}}</h3>
+		<p>&commat;{{user.screen_name}}<p/>
+
+		<div id="index">
+			<ol>
+				<li><a href="#lineChart">Tweets vs Weekday Chart</a></li>
+				<li><a href="#cloud">Tag-cloud</a></li>
+				<li><a href="#co_occurenceMatrix">Word co-occurence</a></li>
+				<li><a href="#networkGraph">Network Graph of friends/followers</a></li>
+			</ol>
+		</div>
+
+	</div>
+
+	<hr>
+
+	<!-- <div>
+		<ol start='0'>
+			{% for d in day_list %}
+			<li>{{ d }}</li>
+			{% endfor %}
+		</ol>
+	</div> -->
+
+	<h4>Number of tweets vs weekday</h4>
+	<div id="lineChart">
+		<img src="{% static 'tweets/graph.png' %}" alt="Tweets-per-weekday graph" height="400" width="1000">
+		<a href="#top">Return to top</a>
+	</div>
+
+	<hr>
+
+	<h4>Tag-cloud of 50 most occurring words</h4>
+	<div id="cloud">
+		<img src="{% static 'tweets/wordcloud.png' %}" alt="Tag-cloud" height="500" width="600">
+		<a href="#top">Return to top</a>
+	</div>
+
+	<hr>
+
+	<h4>Word co-occurences matrix</h4>
+	<div id="co_occurenceMatrix">
+		<svg style="width:1000px;height:1000px;border:0.7px lightgray solid;" />
+		<a href="#top">Return to top</a>
+		<script>
+			  
+			function adjacency() {
+
+				queue()
+				.defer(d3.csv, "{% static 'tweets/nodeFile.csv' %}")
+				.defer(d3.csv, "{% static 'tweets/edgeFile.csv' %}")
+				.await(function(error, file1, file2) { createAdjacencyMatrix(file1, file2); });
+				
+				function createAdjacencyMatrix(nodes,edges){
+					var edgeHash = {};
+					for (x in edges) {
+						var id = edges[x].source + "-" + edges[x].target;
+						edgeHash[id] = edges[x];
+					}
+					
+					matrix = [];
+					//create all possible edges
+					for (a in nodes) {
+						for (b in nodes) {
+							var grid = {id: nodes[a].id + "-" + nodes[b].id, x: b, y: a, weight: 0};
+							if (edgeHash[grid.id]) {
+								grid.weight = edgeHash[grid.id].weight;
+							}
+							matrix.push(grid);
+						}
+					}
+				  
+					d3.select("svg")
+					.append("g")
+					.attr("transform", "translate(150,150)")
+					.attr("id", "adjacencyG")
+					.selectAll("rect")
+					.data(matrix)
+					.enter()
+					.append("rect")
+					.attr("width", 25)
+					.attr("height", 25)
+					.attr("x", function (d) {return d.x * 25})
+					.attr("y", function (d) {return d.y * 25})
+					.style("stroke", "black")
+					.style("stroke-width", "1px")
+					.style("fill", "red")
+					.style("fill-opacity", function (d) {return d.weight * 0.2})
+					.on("mouseover", gridOver)
+					  
+					var scaleSize = nodes.length * 25;
+					var nameScale = d3.scale.ordinal().domain(nodes.map(function (el) {return el.id})).rangePoints([0,scaleSize],1);
+					  
+					xAxis = d3.svg.axis().scale(nameScale).orient("top").tickSize(4);    
+					yAxis = d3.svg.axis().scale(nameScale).orient("left").tickSize(4);    
+					d3.select("#adjacencyG").append("g").call(xAxis).selectAll("text").style("text-anchor", "end").attr("transform", "translate(-10,-10) rotate(60)");
+					d3.select("#adjacencyG").append("g").call(yAxis);
+			  
+					function gridOver(d,i) {
+						d3.selectAll("rect").style("stroke-width", function (p) {return p.x == d.x || p.y == d.y ? "3px" : "1px"})
+					}
+				}
+			
+			}
+		</script>
+	</div>
+
+	<h4>Network-graph of friends and followers</h4>
+	<div id="networkGraph">
+		<script>
+		function network() {
+			var width = 1000,
+				height = 1000;
+
+			var color = d3.scale.category10();
+
+			var svg = d3.select("body").append("svg")
+				.attr("width", width)
+				.attr("height", height);
+
+
+			var force = d3.layout.force()
+				.gravity(.05)
+				.distance(60)
+			    .charge(-300)
+			    .size([width, height]);
+
+			d3.json("{% static 'tweets/network.json' %}", function(json) {
+				force
+			    	.nodes(json.nodes)
+			    	.links(json.links)
+			    	.start();
+
+			  	var link = svg.selectAll(".link")
+			      	.data(json.links)
+			    	.enter().append("line")
+			     	.attr("class", "link")
+			    	.style("stroke-width", function(d) { return Math.sqrt(d.weight); });
+
+			  	var node = svg.selectAll(".node")
+			    	.data(json.nodes)
+			    	.enter().append("g")
+			      	.attr("class", "node")
+			      	.call(force.drag);
+
+			  	node.append("circle")
+			    	.attr("r","5")
+			    	.style("fill", function(d) { return color(d.group); });
+
+			  	node.append("text")
+			    	.attr("x", 12)
+			      	.attr("dy", ".35em")
+			      	.text(function(d) { return d.name });
+
+			  	force.on("tick", function() {
+			    	link.attr("x1", function(d) { return d.source.x; })
+			        	.attr("y1", function(d) { return d.source.y; })
+			        	.attr("x2", function(d) { return d.target.x; })
+			        	.attr("y2", function(d) { return d.target.y; });
+
+			    	node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+			  	});
+			});
+		}
+		</script>
+	</div>
+	<a href="#top">Return to top</a>
+{% endblock %}

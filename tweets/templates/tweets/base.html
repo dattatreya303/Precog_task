@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+{% load staticfiles %}
+
+<head>
+	<title>{% block title %}Tweets Analyzer{% endblock %}</title>
+	<meta charset="utf-8" />
+
+	<link href="{% static 'tweets/bootstrap-tour-standalone.min.css' %}" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="{% static 'tweets/bootstrap-tour-standalone.min.js' %}"></script>
+	<script src="http://d3js.org/d3.v3.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://d3js.org/queue.v1.min.js" type="text/javascript" charset="utf-8"></script>
+
+	<script type="text/javascript">
+		var tour = new Tour({
+		  steps: [
+		  {
+		    element: "#menu",
+		    title: "Welocome to Tweets Analyzer",
+		    content: "Click next to start the demo"
+		  },
+		  {
+		    element: "#form",
+		    title: "Whom are you looking for?",
+		    content: "Enter the twitter handle of the account you want to analyze"
+		  },
+		  {
+		  	element: '#top'
+		  	title: "Analysis complete!"
+		  	content: "We have a tweets vs weekday graph, a tag-cloud, a word co-occurence matrix and a network graph of friends/followers!"
+		  }
+		]});
+
+		
+
+		tour.init();
+
+		tour.start(True);
+	</script>
+
+</head>
+
+<style>
+	.tick line {
+		shape-rendering: crispEdges;
+		stroke: #000;
+	}
+
+	line.minor  {
+		stroke: #777;
+		stroke-dasharray: 2,2;
+	}
+
+	path.domain {
+		fill: none;
+		stroke: black;
+	}
+
+	circle {
+		stroke-width: 1.5px;
+	}
+
+	line {
+	  	stroke: #999;
+	}
+</style>
+
+<body onload="adjacency(); network();">
+	<div id="menu">
+		<a href="{% url 'tweets:main' %}">Home</a>
+		<a href="#">Demo</a>
+	</div>
+
+	<hr>
+
+	<div id='info'>
+		{% block content %}
+		{% endblock %}
+	</div>
+</body>
+</html>
