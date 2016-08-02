@@ -8,7 +8,6 @@ from datetime import datetime
 import tweepy, numpy, os, csv, json
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud, STOPWORDS
-from nvd3 import lineChart
 
 def main(request):
 	# homepage
