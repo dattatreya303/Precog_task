@@ -22,9 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '66yw(+4ics6$uhmygn_q=ify5v8pi+(vi(2icmiu=gf(n+7mzd'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['dattatreya303.pythonanywhere.com']
 
 SESSION_COOKIE_SECURE = True
 
@@ -124,7 +124,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 CONSUMER_KEY = "zuZyViwKAXVNhTBXBvQVMHmkA"
 CONSUMER_SECRET = "WaOS9m7a9XDdVBjb2tsL26GjSMRcWE1LO5A7vimKUtwyQZgvRt"
