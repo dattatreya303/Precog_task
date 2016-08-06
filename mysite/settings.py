@@ -19,12 +19,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '66yw(+4ics6$uhmygn_q=ify5v8pi+(vi(2icmiu=gf(n+7mzd'
+SECRET_KEY = '**'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['dattatreya303.pythonanywhere.com']
+ALLOWED_HOSTS = []
 
 SESSION_COOKIE_SECURE = True
 
@@ -126,9 +126,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-CONSUMER_KEY = "zuZyViwKAXVNhTBXBvQVMHmkA"
-CONSUMER_SECRET = "WaOS9m7a9XDdVBjb2tsL26GjSMRcWE1LO5A7vimKUtwyQZgvRt"
-ACCESS_TOKEN = "4347793154-6GNSVEbfr7S5Qq6Eo2yoASXGH4wkmywnp3FgXPk"
-ACCESS_TOKEN_SECRET = "oHkQytlVTKX2O6lsZStTRIbyi80BTVT4yUNfLXaw61118"
+CONSUMER_KEY = "**"
+CONSUMER_SECRET = "**"
+ACCESS_TOKEN = "**"
+ACCESS_TOKEN_SECRET = "**"
 # print ("base dir path", BASE_DIR)
 # path = os.path.join(STATIC_URL, 'tweets/graph.png')
